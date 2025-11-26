@@ -7,31 +7,24 @@ import NoteEditor from './components/NoteEditor'
 export default Blits.Application({
   template: `
     <Element w="1920" h="1080">
-      <!-- Always-on background to guarantee visible pixels -->
       <Element ref="Bg" w="1920" h="1080"></Element>
 
-      <!-- Visible confirmation text -->
       <Text ref="BootLabel" mount="0.5" x="960" y="540" fontSize="24" textColor="0xff111827">App Loaded</Text>
 
-      <!-- Simple top header strip for immediate visibility -->
-      <Element ref="TopBar" w="1920" h="56" :style="{ rect: true, color: 0xffffffff }">
-        <Text x="24" y="14" fontSize="28" :textColor="Theme.colors.text">Ocean Notes</Text>
+      <Element ref="TopBar" w="1920" h="56">
+        <Text ref="TopBarTitle" x="24" y="14" fontSize="28">Ocean Notes</Text>
       </Element>
 
-      <!-- Main layout -->
       <Element ref="Sidebar" x="24" y="80" w="360" h="976"></Element>
       <Element ref="Editor" x="408" y="80" w="1488" h="976"></Element>
 
-      <!-- Toast -->
       <Element ref="Toast" alpha="0" x="24" y="1008" w="420" h="44">
         <Element mount="0.5" x="210" y="22">
           <Text ref="ToastLabel" fontSize="18" textColor="0xffffffff"></Text>
         </Element>
       </Element>
 
-      <!-- Lightweight in-app loading banner -->
-      <Element ref="LoadingBanner" alpha="1" mount="0.5" x="960" y="540" w="220" h="40"
-        :style="{ rect: true, color: Theme.colors.text, shader: { type: 'RoundedRectangle', radius: 10 } }">
+      <Element ref="LoadingBanner" alpha="1" mount="0.5" x="960" y="540" w="220" h="40">
         <Text mount="0.5" x="110" y="20" fontSize="18" textColor="0xffffffff">Booting…</Text>
       </Element>
     </Element>
@@ -46,14 +39,21 @@ export default Blits.Application({
   },
   async onCreate() {
     try {
-      // Background gradient
+      // Programmatic styles (no :style bindings in template)
+      this.$refs.TopBar.style = { rect: true, color: 0xffffffff }
+      this.$refs.TopBarTitle.textColor = Theme.colors.text
+
       this.$refs.Bg.style = {
         rect: true,
         colorTop: 0x08ffffff,
         colorBottom: 0x08dbeafe,
       }
-      // Toast style
       this.$refs.Toast.style = {
+        rect: true,
+        color: Theme.colors.text,
+        shader: { type: 'RoundedRectangle', radius: 10 },
+      }
+      this.$refs.LoadingBanner.style = {
         rect: true,
         color: Theme.colors.text,
         shader: { type: 'RoundedRectangle', radius: 10 },
@@ -92,11 +92,9 @@ export default Blits.Application({
         this.$refs.Editor.instance.note = null
       }
     } catch (e) {
-      // Make the error visible in UI and console to avoid silent blank screen
       console.error('[Ocean Notes] onCreate failed:', e)
       this.$showToast('Startup error. Check console.')
     } finally {
-      // Hide loading banner and notify DOM to remove fallbacks
       if (this.$refs.LoadingBanner) this.$refs.LoadingBanner.alpha = 0
       window.dispatchEvent(new Event('ocean-notes:ready'))
     }

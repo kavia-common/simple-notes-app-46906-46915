@@ -4,22 +4,22 @@ import { Theme } from '../theme'
 export default Blits.Component('NoteEditor', {
   props: ['dataProvider', 'onDelete'],
   template: `
-    <Element :w="w" :h="h" :style="{ rect: true, color: Theme.colors.surface, shader: { type: 'RoundedRectangle', radius: Theme.radii.xl } }">
-      <Element ref="Pad" x="24" y="24" :w="w - 48" :h="h - 48">
-        <Element ref="TitleBg" :w="w - 48" h="56" :style="{ rect: true, color: 0xffeef2ff, shader: { type: 'RoundedRectangle', radius: Theme.radii.md } }">
-          <Text ref="Title" x="16" y="12" text="Untitled" fontSize="26" :textColor="Theme.colors.text"></Text>
+    <Element ref="Root">
+      <Element ref="Pad" x="24" y="24">
+        <Element ref="TitleBg" h="56">
+          <Text ref="Title" x="16" y="12" text="Untitled" fontSize="26"></Text>
         </Element>
-        <Element ref="BodyBg" y="72" :w="w - 48" :h="h - 160" :style="{ rect: true, color: 0xffffffff, shader: { type: 'RoundedRectangle', radius: Theme.radii.lg } }">
-          <Text ref="Body" x="16" y="16" fontSize="22" :textColor="Theme.colors.text" :wordWrap="true" :wordWrapWidth="w - 96"></Text>
+        <Element ref="BodyBg" y="72">
+          <Text ref="Body" x="16" y="16" fontSize="22"></Text>
         </Element>
-        <Element ref="Footer" :y="h - 100" :w="w - 48" h="60">
-          <Text x="4" y="16" text="Changes autosave" fontSize="16" :textColor="Theme.colors.muted"></Text>
-          <Element ref="DeleteBtn" :x="w - 140" y="8" w="120" h="44" :style="{ rect: true, color: Theme.colors.error, shader: { type: 'RoundedRectangle', radius: Theme.radii.md } }">
+        <Element ref="Footer" h="60">
+          <Text ref="Hint" x="4" y="16" text="Changes autosave" fontSize="16"></Text>
+          <Element ref="DeleteBtn" y="8" w="120" h="44">
             <Text mount="0.5" x="60" y="22" text="Delete" fontSize="20" textColor="0xffffffff"></Text>
           </Element>
         </Element>
       </Element>
-      <Text ref="EmptyState" mount="0.5" :x="w/2" :y="h/2" alpha="0.7" text="Select a note or create a new one" fontSize="24" :textColor="Theme.colors.muted"></Text>
+      <Text ref="EmptyState" mount="0.5" alpha="0.7" text="Select a note or create a new one" fontSize="24"></Text>
     </Element>
   `,
   data() {
@@ -28,6 +28,44 @@ export default Blits.Component('NoteEditor', {
       _note: null,
       _focusField: 'title',
     }
+  },
+  onCreate() {
+    // Size and styles
+    this.$refs.Root.w = this.w
+    this.$refs.Root.h = this.h
+    this.$refs.Root.style = { rect: true, color: Theme.colors.surface, shader: { type: 'RoundedRectangle', radius: Theme.radii.xl } }
+
+    const padW = this.w - 48
+    const padH = this.h - 48
+    this.$refs.Pad.w = padW
+    this.$refs.Pad.h = padH
+
+    this.$refs.TitleBg.w = padW
+    this.$refs.TitleBg.style = { rect: true, color: 0xffeef2ff, shader: { type: 'RoundedRectangle', radius: Theme.radii.md } }
+    this.$refs.Title.textColor = Theme.colors.text
+
+    this.$refs.BodyBg.w = padW
+    this.$refs.BodyBg.h = padH - 136
+    this.$refs.BodyBg.style = { rect: true, color: 0xffffffff, shader: { type: 'RoundedRectangle', radius: Theme.radii.lg } }
+    this.$refs.Body.textColor = Theme.colors.text
+    this.$refs.Body.wordWrap = true
+    this.$refs.Body.wordWrapWidth = this.w - 96
+
+    this.$refs.Footer.y = this.h - 100
+    this.$refs.Footer.w = padW
+    this.$refs.Hint.textColor = Theme.colors.muted
+
+    this.$refs.DeleteBtn.x = this.w - 140
+    this.$refs.DeleteBtn.style = { rect: true, color: Theme.colors.error, shader: { type: 'RoundedRectangle', radius: Theme.radii.md } }
+
+    this.$refs.EmptyState.x = this.w / 2
+    this.$refs.EmptyState.y = this.h / 2
+    this.$refs.EmptyState.textColor = Theme.colors.muted
+
+    this.$refs.DeleteBtn.on('click', () => {
+      if (!this._note) return
+      this.onDelete && this.onDelete(this._note)
+    })
   },
   watch: {
     note(n) {
@@ -60,12 +98,6 @@ export default Blits.Component('NoteEditor', {
       this.$refs.Body.text = v
       if (save && this._note) this._save({ body: v })
     },
-  },
-  onCreate() {
-    this.$refs.DeleteBtn.on('click', () => {
-      if (!this._note) return
-      this.onDelete && this.onDelete(this._note)
-    })
   },
   onUp() { this._focusField = 'title' },
   onDown() { this._focusField = 'body' },

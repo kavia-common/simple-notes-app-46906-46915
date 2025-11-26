@@ -5,12 +5,12 @@ const NoteListItem = Blits.Component('NoteListItem', {
   props: ['note', 'active', 'onSelect', 'onDelete'],
   template: `
     <Element w="344" h="64">
-      <Element ref="Bg" alpha="0" w="344" h="64" :style="{ rect: true, color: Theme.colors.sidebarItemBgActive, shader: { type: 'RoundedRectangle', radius: Theme.radii.md } }"></Element>
+      <Element ref="Bg" alpha="0" w="344" h="64"></Element>
       <Element x="12" y="10" w="320" h="44">
-        <Text ref="Title" fontSize="20" :textColor="Theme.colors.text"></Text>
-        <Text ref="Subtitle" y="26" fontSize="16" :textColor="Theme.colors.muted"></Text>
+        <Text ref="Title" fontSize="20"></Text>
+        <Text ref="Subtitle" y="26" fontSize="16"></Text>
       </Element>
-      <Element ref="Delete" x="300" y="18" w="28" h="28" alpha="0" :style="{ rect: true, color: Theme.colors.error, shader: { type: 'RoundedRectangle', radius: Theme.radii.sm } }">
+      <Element ref="Delete" x="300" y="18" w="28" h="28" alpha="0">
         <Text mount="0.5" x="14" y="14" text="×" fontSize="22" textColor="0xffffffff"></Text>
       </Element>
     </Element>
@@ -19,6 +19,12 @@ const NoteListItem = Blits.Component('NoteListItem', {
     return { Theme }
   },
   onCreate() {
+    // Styles
+    this.$refs.Bg.style = { rect: true, color: Theme.colors.sidebarItemBgActive, shader: { type: 'RoundedRectangle', radius: Theme.radii.md } }
+    this.$refs.Title.textColor = Theme.colors.text
+    this.$refs.Subtitle.textColor = Theme.colors.muted
+    this.$refs.Delete.style = { rect: true, color: Theme.colors.error, shader: { type: 'RoundedRectangle', radius: Theme.radii.sm } }
+
     this._renderNote()
     this.$on('focus', () => {
       this.$refs.Delete.alpha = 0.85
@@ -50,12 +56,12 @@ const NoteListItem = Blits.Component('NoteListItem', {
 export default Blits.Component('NoteList', {
   props: ['dataProvider', 'onSelect', 'onCreate', 'onDelete'],
   template: `
-    <Element :w="w" :h="h" :style="{ rect: true, color: Theme.colors.sidebarBg, shader: { type: 'RoundedRectangle', radius: Theme.radii.xl } }">
-      <Text x="16" y="16" text="Notes" fontSize="24" :textColor="Theme.colors.text"></Text>
-      <Text ref="Empty" x="16" y="64" alpha="0" text="No notes yet. Create one →" fontSize="18" :textColor="Theme.colors.muted"></Text>
+    <Element ref="Root">
+      <Text ref="Title" x="16" y="16" text="Notes" fontSize="24"></Text>
+      <Text ref="Empty" x="16" y="64" alpha="0" text="No notes yet. Create one →" fontSize="18"></Text>
       <Element ref="List" x="8" y="56" w="344"></Element>
-      <Element ref="CreateBtn" x="16" :y="h - 64" w="328" h="44" :style="{ rect: true, color: Theme.colors.primary, shader: { type: 'RoundedRectangle', radius: Theme.radii.md } }">
-        <Text mount="0.5" :x="w/2" :y="h/2" text="New Note" fontSize="20" textColor="0xffffffff"></Text>
+      <Element ref="CreateBtn" x="16" w="328" h="44">
+        <Text ref="CreateBtnLabel" mount="0.5" text="New Note" fontSize="20" textColor="0xffffffff"></Text>
       </Element>
     </Element>
   `,
@@ -64,6 +70,22 @@ export default Blits.Component('NoteList', {
       Theme,
       _items: [],
     }
+  },
+  onCreate() {
+    // Size and styles
+    this.$refs.Root.w = this.w
+    this.$refs.Root.h = this.h
+    this.$refs.Root.style = { rect: true, color: Theme.colors.sidebarBg, shader: { type: 'RoundedRectangle', radius: Theme.radii.xl } }
+
+    this.$refs.Title.textColor = Theme.colors.text
+    this.$refs.Empty.textColor = Theme.colors.muted
+
+    this.$refs.CreateBtn.y = this.h - 64
+    this.$refs.CreateBtn.style = { rect: true, color: Theme.colors.primary, shader: { type: 'RoundedRectangle', radius: Theme.radii.md } }
+    this.$refs.CreateBtnLabel.x = this.$refs.CreateBtn.w / 2
+    this.$refs.CreateBtnLabel.y = this.$refs.CreateBtn.h / 2
+
+    this.$refs.CreateBtn.on('click', () => this.onCreate && this.onCreate())
   },
   async refresh(selectedId) {
     const items = await this.dataProvider.list()
@@ -79,9 +101,6 @@ export default Blits.Component('NoteList', {
       },
     }))
     this.$refs.Empty.alpha = items.length ? 0 : 1
-  },
-  onCreate() {
-    this.$refs.CreateBtn.on('click', () => this.onCreate && this.onCreate())
   },
   onFocus() {
     if (!this.$refs.List.children?.length) this.$stage.focus = this.$refs.CreateBtn
