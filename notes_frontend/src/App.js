@@ -4,28 +4,24 @@ import { createStorage } from './services/storage'
 import NoteList from './components/NoteList'
 import NoteEditor from './components/NoteEditor'
 
-// Baseline-first App that always renders a visible UI even if children or storage fail
+// Export a valid Blits Application with minimal, always-visible baseline UI
 export default Blits.Application({
   template: `
     <Element w="1920" h="1080">
       <Element ref="Bg" w="1920" h="1080"></Element>
 
-      <!-- Baseline title always visible -->
-      <Text ref="BootLabel" mount="0.5" x="960" y="540" fontSize="32" textColor="0xff111827">Notes App</Text>
+      <Text ref="BootLabel" mount="0.5" x="960" y="540" fontSize="32">Ocean Notes</Text>
 
-      <!-- Top bar -->
       <Element ref="TopBar" w="1920" h="56">
         <Text ref="TopBarTitle" x="24" y="14" fontSize="28">Ocean Notes</Text>
       </Element>
 
-      <!-- Main regions -->
       <Element ref="Sidebar" x="24" y="80" w="360" h="976"></Element>
       <Element ref="Editor" x="408" y="80" w="1488" h="976"></Element>
 
-      <!-- Toast -->
       <Element ref="Toast" alpha="0" x="24" y="1008" w="420" h="44">
         <Element mount="0.5" x="210" y="22">
-          <Text ref="ToastLabel" fontSize="18" textColor="0xffffffff"></Text>
+          <Text ref="ToastLabel" fontSize="18"></Text>
         </Element>
       </Element>
     </Element>
@@ -39,38 +35,37 @@ export default Blits.Application({
     }
   },
   async onCreate() {
-    // Always paint baseline UI first
+    // Baseline painting with safe style usage
     try {
-      // Programmatic styles (no Vue-style bindings)
       this.$refs.Bg.style = {
         rect: true,
-        colorTop: 0x08ffffff,
-        colorBottom: 0x08dbeafe,
+        colorTop: Theme.colors.background,
+        colorBottom: 0xffeef2ff,
       }
-      this.$refs.TopBar.style = { rect: true, color: 0xffffffff }
+      this.$refs.TopBar.style = { rect: true, color: Theme.colors.surface }
       this.$refs.TopBarTitle.textColor = Theme.colors.text
+      this.$refs.BootLabel.textColor = Theme.colors.text
       this.$refs.Toast.style = {
         rect: true,
         color: Theme.colors.text,
         shader: { type: 'RoundedRectangle', radius: 10 },
       }
+      this.$refs.ToastLabel.textColor = 0xffffffff
     } catch (e) {
-      console.warn('[Ocean Notes] Baseline styling failed:', e)
+      console.error('[Ocean Notes] Baseline styling failed:', e)
     }
 
-    // Dispatch ready ASAP so overlay cleans up even if features fail
+    // Signal ready even if features fail, to remove overlays
     try {
       window.dispatchEvent(new Event('ocean-notes:ready'))
     } catch (e) {
-      // Ensure the block is not empty to satisfy linting; safe to ignore failure
       console.warn('[Ocean Notes] Dispatch ready event failed:', e)
     }
 
-    // Progressive features: storage and child components
+    // Progressive enablement: wrap storage + children to prevent blank screen
     try {
       this._store = createStorage()
 
-      // Attach child components
       this.$patch({
         Sidebar: {
           __isComponent__: true,
@@ -93,11 +88,13 @@ export default Blits.Application({
       })
 
       // Initial data load
-      await this.$refs.Sidebar.instance.refresh(this._selected?.id)
-      const items = await this._store.list()
+      if (this.$refs.Sidebar?.instance?.refresh) {
+        await this.$refs.Sidebar.instance.refresh(this._selected?.id)
+      }
+      const items = (await this._store.list()) || []
       if (items.length) {
         this.selectNote(items[0])
-      } else {
+      } else if (this.$refs.Editor?.instance) {
         this.$refs.Editor.instance.note = null
       }
     } catch (e) {
@@ -111,7 +108,9 @@ export default Blits.Application({
     /** Create a new note and focus it in the editor. */
     if (!this._store) return this.$showToast('Storage unavailable')
     const created = await this._store.create({ title: 'Untitled', body: '' })
-    await this.$refs.Sidebar.instance.refresh(created.id)
+    if (this.$refs.Sidebar?.instance?.refresh) {
+      await this.$refs.Sidebar.instance.refresh(created.id)
+    }
     this.selectNote(created)
     this.$showToast('Note created')
   },
@@ -126,7 +125,9 @@ export default Blits.Application({
     } catch {
       this.$showToast('Error deleting note')
     }
-    await this.$refs.Sidebar.instance.refresh()
+    if (this.$refs.Sidebar?.instance?.refresh) {
+      await this.$refs.Sidebar.instance.refresh()
+    }
     const items = await this._store.list()
     this.selectNote(items[0] || null)
   },

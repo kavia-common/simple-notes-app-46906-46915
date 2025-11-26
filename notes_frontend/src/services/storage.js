@@ -12,6 +12,7 @@ export function createStorage() {
   /** Create a storage API with CRUD methods: list, get, create, update, remove. */
   const apiBase =
     (typeof import.meta !== 'undefined' &&
+      import.meta &&
       import.meta.env &&
       (import.meta.env.VITE_API_BASE || import.meta.env.VITE_BACKEND_URL)) ||
     null;

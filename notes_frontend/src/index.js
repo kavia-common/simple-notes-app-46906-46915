@@ -1,7 +1,7 @@
 import Blits from '@lightningjs/blits'
 import App from './App.js'
 
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', () => {
   const mountId = 'app'
   const mountEl = document.getElementById(mountId)
 
@@ -28,13 +28,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   let app
   try {
-    // For Blits v1.29.x: prefer Launch; also support createApp signature
+    // For @lightningjs/blits 1.29.x the public start helper is Launch(App, mountId, opts)
     if (typeof Blits.Launch === 'function') {
       app = Blits.Launch(App, mountId, { w: 1280, h: 720, debugLevel: 1 })
     } else if (typeof Blits.createApp === 'function') {
+      // Older API fallback
       app = Blits.createApp(App, { stage: { w: 1280, h: 720, canvasId: mountId } })
     } else if (typeof Blits.Application === 'function') {
-      app = new (Blits.Application(App))()
+      // Very old pattern
+      const AppCtor = Blits.Application(App)
+      app = new AppCtor()
       app.start({ stage: { w: 1280, h: 720, canvasId: mountId } })
     } else {
       throw new Error('No compatible Blits launch API found')
@@ -55,18 +58,21 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.body.appendChild(overlay)
 
   const cleanup = () => {
-    overlay.remove()
-    if (fallback.isConnected) fallback.remove()
-    const sb = document.getElementById('startup-banner')
-    if (sb) sb.remove()
+    try { overlay.remove() } catch (e) { console.warn('[Ocean Notes] Overlay cleanup failed:', e) }
+    try {
+      if (fallback.isConnected) fallback.remove()
+    } catch (e) { console.warn('[Ocean Notes] Fallback cleanup failed:', e) }
+    try {
+      const sb = document.getElementById('startup-banner')
+      if (sb) sb.remove()
+    } catch (e) { console.warn('[Ocean Notes] Startup banner cleanup failed:', e) }
   }
 
-  // If app didn't throw but still not rendering, attempt delayed cleanup so baseline DOM remains
+  // Clean on app ready or next frame to ensure overlay doesn't linger
   window.addEventListener('ocean-notes:ready', cleanup, { once: true })
-  // Defensive: still cleanup after first frame to avoid overlay lingering
   requestAnimationFrame(() => cleanup())
 
-  // Edge: if canvas is available, style it for nicer appearance
+  // Style canvas if present
   try {
     const canvas =
       app?.stage?.getCanvas?.() ||
