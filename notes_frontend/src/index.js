@@ -43,6 +43,8 @@ document.addEventListener('DOMContentLoaded', () => {
       window.addEventListener('ocean-notes:ready', () => {
         overlay.remove()
         fallback.remove()
+        const sb = document.getElementById('startup-banner')
+        if (sb) sb.remove()
       })
     } else {
       console.warn('[Ocean Notes] Canvas not available from app.stage.getCanvas().')

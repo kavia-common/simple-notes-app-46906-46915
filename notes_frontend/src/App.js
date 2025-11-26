@@ -12,7 +12,7 @@ export default Blits.Application({
 
       <!-- Simple top header strip for immediate visibility -->
       <Element ref="TopBar" w="1920" h="56" :style="{ rect: true, color: 0xffffffff }">
-        <Text x="24" y="14" text="Ocean Notes" fontSize="28" :textColor="Theme.colors.text" />
+        <Text x="24" y="14" text="Ocean Notes" fontSize="28" :textColor="Theme.colors.text"></Text>
       </Element>
 
       <!-- Main layout -->

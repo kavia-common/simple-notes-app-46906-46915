@@ -7,10 +7,10 @@ export default Blits.Component('NoteEditor', {
     <Element :w="w" :h="h" :style="{ rect: true, color: Theme.colors.surface, shader: { type: 'RoundedRectangle', radius: Theme.radii.xl } }">
       <Element ref="Pad" x="24" y="24" :w="w - 48" :h="h - 48">
         <Element ref="TitleBg" :w="w - 48" h="56" :style="{ rect: true, color: 0xffeef2ff, shader: { type: 'RoundedRectangle', radius: Theme.radii.md } }">
-          <Text ref="Title" x="16" y="12" text="Untitled" fontSize="26" :textColor="Theme.colors.text" />
+          <Text ref="Title" x="16" y="12" text="Untitled" fontSize="26" :textColor="Theme.colors.text"></Text>
         </Element>
         <Element ref="BodyBg" y="72" :w="w - 48" :h="h - 160" :style="{ rect: true, color: 0xffffffff, shader: { type: 'RoundedRectangle', radius: Theme.radii.lg } }">
-          <Text ref="Body" x="16" y="16" fontSize="22" :textColor="Theme.colors.text" :wordWrap="true" :wordWrapWidth="w - 96" />
+          <Text ref="Body" x="16" y="16" fontSize="22" :textColor="Theme.colors.text" :wordWrap="true" :wordWrapWidth="w - 96"></Text>
         </Element>
         <Element ref="Footer" :y="h - 100" :w="w - 48" h="60">
           <Text x="4" y="16" text="Changes autosave" fontSize="16" :textColor="Theme.colors.muted" />
@@ -19,7 +19,7 @@ export default Blits.Component('NoteEditor', {
           </Element>
         </Element>
       </Element>
-      <Text ref="EmptyState" mount="0.5" :x="w/2" :y="h/2" alpha="0.7" text="Select a note or create a new one" fontSize="24" :textColor="Theme.colors.muted" />
+      <Text ref="EmptyState" mount="0.5" :x="w/2" :y="h/2" alpha="0.7" text="Select a note or create a new one" fontSize="24" :textColor="Theme.colors.muted"></Text>
     </Element>
   `,
   data() {
