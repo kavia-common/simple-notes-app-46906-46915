@@ -5,14 +5,12 @@ const NoteListItem = Blits.Component('NoteListItem', {
   props: ['note', 'active', 'onSelect', 'onDelete'],
   template: `
     <Element w="344" h="64">
-      <Element ref="Bg" alpha="0" rect :color="Theme.colors.sidebarItemBgActive"
-               shader.type="RoundedRectangle" :shader.radius="Theme.radii.md" w="344" h="64" />
+      <Element ref="Bg" alpha="0" w="344" h="64" :style="{ rect: true, color: Theme.colors.sidebarItemBgActive, shader: { type: 'RoundedRectangle', radius: Theme.radii.md } }" />
       <Element x="12" y="10" w="320" h="44">
         <Text ref="Title" fontSize="20" :textColor="Theme.colors.text" />
         <Text ref="Subtitle" y="26" fontSize="16" :textColor="Theme.colors.muted" />
       </Element>
-      <Element ref="Delete" x="300" y="18" w="28" h="28" rect :color="Theme.colors.error"
-               alpha="0" shader.type="RoundedRectangle" :shader.radius="Theme.radii.sm">
+      <Element ref="Delete" x="300" y="18" w="28" h="28" alpha="0" :style="{ rect: true, color: Theme.colors.error, shader: { type: 'RoundedRectangle', radius: Theme.radii.sm } }">
         <Text mount="0.5" x="14" y="14" text="×" fontSize="22" textColor="0xffffffff" />
       </Element>
     </Element>
@@ -52,12 +50,11 @@ const NoteListItem = Blits.Component('NoteListItem', {
 export default Blits.Component('NoteList', {
   props: ['dataProvider', 'onSelect', 'onCreate', 'onDelete'],
   template: `
-    <Element :w="w" :h="h" rect :color="Theme.colors.sidebarBg" shader.type="RoundedRectangle" :shader.radius="Theme.radii.xl">
+    <Element :w="w" :h="h" :style="{ rect: true, color: Theme.colors.sidebarBg, shader: { type: 'RoundedRectangle', radius: Theme.radii.xl } }">
       <Text x="16" y="16" text="Notes" fontSize="24" :textColor="Theme.colors.text" />
       <Text ref="Empty" x="16" y="64" alpha="0" text="No notes yet. Create one →" fontSize="18" :textColor="Theme.colors.muted" />
       <Element ref="List" x="8" y="56" w="344" />
-      <Element ref="CreateBtn" x="16" :y="h - 64" w="328" h="44" rect :color="Theme.colors.primary"
-               shader.type="RoundedRectangle" :shader.radius="Theme.radii.md">
+      <Element ref="CreateBtn" x="16" :y="h - 64" w="328" h="44" :style="{ rect: true, color: Theme.colors.primary, shader: { type: 'RoundedRectangle', radius: Theme.radii.md } }">
         <Text mount="0.5" :x="w/2" :y="h/2" text="New Note" fontSize="20" textColor="0xffffffff" />
       </Element>
     </Element>

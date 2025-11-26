@@ -4,20 +4,17 @@ import { Theme } from '../theme'
 export default Blits.Component('NoteEditor', {
   props: ['dataProvider', 'onDelete'],
   template: `
-    <Element :w="w" :h="h" rect :color="Theme.colors.surface" shader.type="RoundedRectangle" :shader.radius="Theme.radii.xl">
+    <Element :w="w" :h="h" :style="{ rect: true, color: Theme.colors.surface, shader: { type: 'RoundedRectangle', radius: Theme.radii.xl } }">
       <Element ref="Pad" x="24" y="24" :w="w - 48" :h="h - 48">
-        <Element ref="TitleBg" :w="w - 48" h="56" rect color="0xffeef2ff"
-                 shader.type="RoundedRectangle" :shader.radius="Theme.radii.md">
+        <Element ref="TitleBg" :w="w - 48" h="56" :style="{ rect: true, color: 0xffeef2ff, shader: { type: 'RoundedRectangle', radius: Theme.radii.md } }">
           <Text ref="Title" x="16" y="12" text="Untitled" fontSize="26" :textColor="Theme.colors.text" />
         </Element>
-        <Element ref="BodyBg" y="72" :w="w - 48" :h="h - 160" rect color="0xffffffff"
-                 shader.type="RoundedRectangle" :shader.radius="Theme.radii.lg">
-          <Text ref="Body" x="16" y="16" fontSize="22" :textColor="Theme.colors.text" :wordWrap="true" :wordWrapWidth="(w - 96)" />
+        <Element ref="BodyBg" y="72" :w="w - 48" :h="h - 160" :style="{ rect: true, color: 0xffffffff, shader: { type: 'RoundedRectangle', radius: Theme.radii.lg } }">
+          <Text ref="Body" x="16" y="16" fontSize="22" :textColor="Theme.colors.text" :wordWrap="true" :wordWrapWidth="w - 96" />
         </Element>
         <Element ref="Footer" :y="h - 100" :w="w - 48" h="60">
           <Text x="4" y="16" text="Changes autosave" fontSize="16" :textColor="Theme.colors.muted" />
-          <Element ref="DeleteBtn" :x="w - 140" y="8" w="120" h="44" rect :color="Theme.colors.error"
-                   shader.type="RoundedRectangle" :shader.radius="Theme.radii.md">
+          <Element ref="DeleteBtn" :x="w - 140" y="8" w="120" h="44" :style="{ rect: true, color: Theme.colors.error, shader: { type: 'RoundedRectangle', radius: Theme.radii.md } }">
             <Text mount="0.5" x="60" y="22" text="Delete" fontSize="20" textColor="0xffffffff" />
           </Element>
         </Element>
