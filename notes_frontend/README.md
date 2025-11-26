@@ -1,49 +1,20 @@
-# lightningjs
+# Ocean Notes (LightningJS Blits)
 
-### lightningjs
+A simple notes app built with LightningJS (Blits) featuring a modern Ocean Professional theme.
 
+Features:
+- Sidebar for note list
+- Main editor to view/edit selected note
+- Create, update, and delete notes
+- Session persistence via localStorage (fallback to in-memory)
+- Optional backend via env vars: VITE_API_BASE or VITE_BACKEND_URL
 
-Welcome to the _lightningjs_ Lightning 3 Blits App!
+Run:
+- npm install
+- npm run dev
 
-### Getting started
-
-Follow the steps below to get your Lightning 3 Blits App up and running in no time.
-
-#### IDE setup
-
-It is highly recommended to install the Blits [VS-code extension](https://marketplace.visualstudio.com/items?itemName=LightningJS.lightning-blits) which will give you template highlighting and improved autocompletion.
-
-#### Project setup
-
-Run the following command to install the dependencies of your App:
-
-```sh
-npm install
-```
-
-#### Build and run in development mode
-
-Run your App in development mode:
-
-```sh
-npm run dev
-```
-
-This command uses Vite to fire up a local server, with Hot Reloading support. Visit the provided link in your web browser to see the App in action.
-
-#### Build the App for production
-
-Create an optimized and minified version of your App:
-
-```sh
-npm run build
-```
-
-This will create a production version of the app in the `dist` folder.
-
-
-### Resources
-
-- [Blits documentation](https://lightningjs.io/v3-docs/blits/getting_started/intro.html) - official documentation
-- [Blits Example App](https://blits-demo.lightningjs.io/?source=true) - a great reference to learn by example
-- [Blits Components](https://lightningjs.io/blits-components.html) - off-the-shelf, basic and performant reference components
+Keyboard:
+- Up/Down to move in the list
+- Enter/Space to select
+- In editor: Up focuses title, Down focuses body
+- Type to edit, Backspace to delete character, Enter adds newline in body

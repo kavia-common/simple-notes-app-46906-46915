@@ -1,7 +1,8 @@
 {
-  "name": "lightningjs",
-  "version": "0.1.0",
-  "description": "lightningjs",
+  "name": "ocean-notes-lightning",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Ocean Notes app using LightningJS Blits",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -9,7 +10,8 @@
     "lint": "eslint '**/*.js'",
     "lint:fix": "eslint '**/*.js' --fix",
     "build": "vite build",
-    "dev": "vite dev"
+    "dev": "vite dev --port ${VITE_PORT:-3000}",
+    "preview": "vite preview --port ${VITE_PORT:-3000}"
   },
   "devDependencies": {
     "vite": "5.4.8",

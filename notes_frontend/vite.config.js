@@ -6,7 +6,7 @@ import blitsVitePlugins from '@lightningjs/blits/vite'
 
 export default defineConfig(({ command, mode, ssrBuild }) => {
   return {
-    base: '/', // Set to your base path if you are deploying to a subdirectory (example: /myApp/)
+    base: '/',
     plugins: [...blitsVitePlugins],
     resolve: {
       mainFields: ['browser', 'module', 'jsnext:main', 'jsnext'],
@@ -14,7 +14,7 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
     server: {
       host: '0.0.0.0',
       allowedHosts: ['.kavia.ai'],
-      port: 3000,
+      port: Number(process.env.VITE_PORT || 3000),
       headers: {
         'Cross-Origin-Opener-Policy': 'same-origin',
         'Cross-Origin-Embedder-Policy': 'require-corp',
@@ -25,6 +25,10 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
     },
     worker: {
       format: 'es',
+    },
+    define: {
+      'import.meta.env.VITE_API_BASE': JSON.stringify(process.env.VITE_API_BASE || ''),
+      'import.meta.env.VITE_BACKEND_URL': JSON.stringify(process.env.VITE_BACKEND_URL || ''),
     },
   }
 })
