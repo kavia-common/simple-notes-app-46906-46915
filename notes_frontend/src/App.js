@@ -7,13 +7,29 @@ import NoteEditor from './components/NoteEditor'
 export default Blits.Application({
   template: `
     <Element w="1920" h="1080">
+      <!-- Always-on background to guarantee visible pixels -->
       <Element ref="Bg" w="1920" h="1080"></Element>
-      <Element ref="Sidebar" x="24" y="24" w="360" h="1032"></Element>
-      <Element ref="Editor" x="408" y="24" w="1488" h="1032"></Element>
+
+      <!-- Simple top header strip for immediate visibility -->
+      <Element ref="TopBar" w="1920" h="56" :style="{ rect: true, color: 0xffffffff }">
+        <Text x="24" y="14" text="Ocean Notes" fontSize="28" :textColor="Theme.colors.text" />
+      </Element>
+
+      <!-- Main layout -->
+      <Element ref="Sidebar" x="24" y="80" w="360" h="976"></Element>
+      <Element ref="Editor" x="408" y="80" w="1488" h="976"></Element>
+
+      <!-- Toast -->
       <Element ref="Toast" alpha="0" x="24" y="1008" w="420" h="44">
         <Element mount="0.5" x="210" y="22">
           <Text ref="ToastLabel" fontSize="18" textColor="0xffffffff" text=""></Text>
         </Element>
+      </Element>
+
+      <!-- Lightweight in-app loading banner -->
+      <Element ref="LoadingBanner" alpha="1" mount="0.5" x="960" y="540" w="220" h="40"
+        :style="{ rect: true, color: Theme.colors.text, shader: { type: 'RoundedRectangle', radius: 10 } }">
+        <Text mount="0.5" x="110" y="20" text="Booting…" fontSize="18" textColor="0xffffffff" />
       </Element>
     </Element>
   `,
@@ -26,49 +42,60 @@ export default Blits.Application({
     }
   },
   async onCreate() {
-    // Style background as rect and apply gradient colors
-    this.$refs.Bg.style = {
-      rect: true,
-      colorTop: 0x08ffffff,
-      colorBottom: 0x08dbeafe,
-    }
-    // Style toast as rounded rect with theme text color background
-    this.$refs.Toast.style = {
-      rect: true,
-      color: Theme.colors.text,
-      shader: { type: 'RoundedRectangle', radius: 10 },
-    }
+    try {
+      // Background gradient
+      this.$refs.Bg.style = {
+        rect: true,
+        colorTop: 0x08ffffff,
+        colorBottom: 0x08dbeafe,
+      }
+      // Toast style
+      this.$refs.Toast.style = {
+        rect: true,
+        color: Theme.colors.text,
+        shader: { type: 'RoundedRectangle', radius: 10 },
+      }
 
-    this._store = createStorage()
+      // Init storage
+      this._store = createStorage()
 
-    // Attach components
-    this.$patch({
-      Sidebar: {
-        __isComponent__: true,
-        component: NoteList,
-        props: {
-          dataProvider: this._store,
-          onSelect: (note) => this.selectNote(note),
-          onCreate: () => this.createNote(),
-          onDelete: (note) => this.deleteNote(note),
+      // Attach components
+      this.$patch({
+        Sidebar: {
+          __isComponent__: true,
+          component: NoteList,
+          props: {
+            dataProvider: this._store,
+            onSelect: (note) => this.selectNote(note),
+            onCreate: () => this.createNote(),
+            onDelete: (note) => this.deleteNote(note),
+          },
         },
-      },
-      Editor: {
-        __isComponent__: true,
-        component: NoteEditor,
-        props: {
-          dataProvider: this._store,
-          onDelete: (note) => this.deleteNote(note),
+        Editor: {
+          __isComponent__: true,
+          component: NoteEditor,
+          props: {
+            dataProvider: this._store,
+            onDelete: (note) => this.deleteNote(note),
+          },
         },
-      },
-    })
+      })
 
-    await this.$refs.Sidebar.instance.refresh(this._selected?.id)
-    const items = await this._store.list()
-    if (items.length) {
-      this.selectNote(items[0])
-    } else {
-      this.$refs.Editor.instance.note = null
+      await this.$refs.Sidebar.instance.refresh(this._selected?.id)
+      const items = await this._store.list()
+      if (items.length) {
+        this.selectNote(items[0])
+      } else {
+        this.$refs.Editor.instance.note = null
+      }
+    } catch (e) {
+      // Make the error visible in UI and console to avoid silent blank screen
+      console.error('[Ocean Notes] onCreate failed:', e)
+      this.$showToast('Startup error. Check console.')
+    } finally {
+      // Hide loading banner and notify DOM to remove fallbacks
+      if (this.$refs.LoadingBanner) this.$refs.LoadingBanner.alpha = 0
+      window.dispatchEvent(new Event('ocean-notes:ready'))
     }
   },
 

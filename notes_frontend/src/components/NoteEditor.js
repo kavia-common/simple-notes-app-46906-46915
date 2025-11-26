@@ -48,7 +48,7 @@ export default Blits.Component('NoteEditor', {
       try {
         const updated = await this.dataProvider.update(this._note.id, patch)
         if (updated) this._note = updated
-      } catch (e) {
+      } catch {
         this.$app.$showToast && this.$app.$showToast('Save failed. Changes held locally.')
       }
     },
