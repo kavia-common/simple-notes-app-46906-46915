@@ -9,7 +9,7 @@ export default Blits.Component('Loader', {
     </Element>
     `,
   // PUBLIC_INTERFACE
-  /** Props: loaderColor */
+  /** Loader props: pass loaderColor as number (0xAARRGGBB) or hex string "#RRGGBB". */
   props: ['loaderColor'],
   data() {
     return {
