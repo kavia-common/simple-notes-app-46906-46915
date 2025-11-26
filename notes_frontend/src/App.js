@@ -10,9 +10,12 @@ export default Blits.Application({
       <!-- Always-on background to guarantee visible pixels -->
       <Element ref="Bg" w="1920" h="1080"></Element>
 
+      <!-- Visible confirmation text -->
+      <Text ref="BootLabel" mount="0.5" x="960" y="540" fontSize="24" textColor="0xff111827">App Loaded</Text>
+
       <!-- Simple top header strip for immediate visibility -->
       <Element ref="TopBar" w="1920" h="56" :style="{ rect: true, color: 0xffffffff }">
-        <Text x="24" y="14" text="Ocean Notes" fontSize="28" :textColor="Theme.colors.text"></Text>
+        <Text x="24" y="14" fontSize="28" :textColor="Theme.colors.text">Ocean Notes</Text>
       </Element>
 
       <!-- Main layout -->
@@ -22,14 +25,14 @@ export default Blits.Application({
       <!-- Toast -->
       <Element ref="Toast" alpha="0" x="24" y="1008" w="420" h="44">
         <Element mount="0.5" x="210" y="22">
-          <Text ref="ToastLabel" fontSize="18" textColor="0xffffffff" text=""></Text>
+          <Text ref="ToastLabel" fontSize="18" textColor="0xffffffff"></Text>
         </Element>
       </Element>
 
       <!-- Lightweight in-app loading banner -->
       <Element ref="LoadingBanner" alpha="1" mount="0.5" x="960" y="540" w="220" h="40"
         :style="{ rect: true, color: Theme.colors.text, shader: { type: 'RoundedRectangle', radius: 10 } }">
-        <Text mount="0.5" x="110" y="20" text="Booting…" fontSize="18" textColor="0xffffffff" />
+        <Text mount="0.5" x="110" y="20" fontSize="18" textColor="0xffffffff">Booting…</Text>
       </Element>
     </Element>
   `,

@@ -13,9 +13,9 @@ export default Blits.Component('NoteEditor', {
           <Text ref="Body" x="16" y="16" fontSize="22" :textColor="Theme.colors.text" :wordWrap="true" :wordWrapWidth="w - 96"></Text>
         </Element>
         <Element ref="Footer" :y="h - 100" :w="w - 48" h="60">
-          <Text x="4" y="16" text="Changes autosave" fontSize="16" :textColor="Theme.colors.muted" />
+          <Text x="4" y="16" text="Changes autosave" fontSize="16" :textColor="Theme.colors.muted"></Text>
           <Element ref="DeleteBtn" :x="w - 140" y="8" w="120" h="44" :style="{ rect: true, color: Theme.colors.error, shader: { type: 'RoundedRectangle', radius: Theme.radii.md } }">
-            <Text mount="0.5" x="60" y="22" text="Delete" fontSize="20" textColor="0xffffffff" />
+            <Text mount="0.5" x="60" y="22" text="Delete" fontSize="20" textColor="0xffffffff"></Text>
           </Element>
         </Element>
       </Element>
